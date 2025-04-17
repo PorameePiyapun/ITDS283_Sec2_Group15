@@ -18,6 +18,7 @@ flutter:
 
   assets:
     - assets/logo.png
+    - assets/avatar.png
 
   fonts:
     - family: Inter
