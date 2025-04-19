@@ -39,9 +39,9 @@ class _HomeScreenState extends State<HomeScreen> {
         currentIndex: 0,
         onTap: (index) {
           if (index == 1) {
-            Navigator.pushNamed(context, '/reservation');
+            Navigator.pushNamed(context, '/reservation'); // Navigate to ReservationScreen
           } else if (index == 2) {
-            Navigator.pushNamed(context, '/browse');
+            Navigator.pushNamed(context, '/browse'); // Navigate to BrowseScreen
           }
         },
         items: const [
@@ -57,18 +57,15 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 40),
-
               const Text(
                 "Home",
                 style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
-
-              // PM2.5 Section
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.blueGrey,
+                  color: Color(0xFF3cc4b4),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Row(
@@ -84,7 +81,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-
               Row(
                 children: const [
                   Text("Steps", style: TextStyle(fontWeight: FontWeight.bold)),

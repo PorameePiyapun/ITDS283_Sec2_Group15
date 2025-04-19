@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:help_you_to_mu_health/screens/bmi_screen.dart';
 
 class BrowseScreen extends StatefulWidget {
   @override
@@ -6,14 +7,19 @@ class BrowseScreen extends StatefulWidget {
 }
 
 class _BrowseScreenState extends State<BrowseScreen> {
-  int _selectedIndex = 2;
+  int _selectedIndex = 2; // 2 = Browse
 
   void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
     if (index == 0) {
       Navigator.pushReplacementNamed(context, '/home');
     } else if (index == 1) {
       Navigator.pushReplacementNamed(context, '/reservation');
     }
+    // index == 2 is current page (Browse), so no need to do anything
   }
 
   @override
@@ -47,10 +53,20 @@ class _BrowseScreenState extends State<BrowseScreen> {
             const SizedBox(height: 16),
             _buildCategoryTile(Icons.local_fire_department, "Activity", Colors.deepOrange),
             const SizedBox(height: 12),
-            _buildCategoryTile(Icons.accessibility_new, "Body Measurements", Colors.purple),
+            _buildCategoryTile(
+              Icons.accessibility_new,
+              "Body Measurements",
+              Colors.purple,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => BMIScreen()),
+                );
+              },
+            ),
             const SizedBox(height: 12),
             _buildCategoryTile(Icons.favorite, "Heart", Colors.red),
-            medication(), // Use the new medication function here
+            medication(),
           ],
         ),
       ),

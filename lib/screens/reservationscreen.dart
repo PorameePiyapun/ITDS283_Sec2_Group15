@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-class MedicationsScreen extends StatefulWidget {
+class ReservationScreen extends StatefulWidget {
+  const ReservationScreen({super.key});
+  
   @override
-  _MedicationsScreenState createState() => _MedicationsScreenState();
+  _ReservationScreenState createState() => _ReservationScreenState();
 }
 
-class _MedicationsScreenState extends State<MedicationsScreen> {
-  List<Map<String, String>> medications = [];
+class _ReservationScreenState extends State<ReservationScreen> {
+  List<Map<String, String>> appointments = [];
 
-  void _addMedication(String name, String dateTime) {
+  void _addAppointment(String title, String dateTime) {
     setState(() {
-      medications.add({'name': name, 'dateTime': dateTime});
+      appointments.add({'title': title, 'dateTime': dateTime});
     });
   }
 
-  void _showAddMedicationDialog() {
-    String medicationName = '';
+  void _showAddAppointmentDialog() {
+    String appointmentTitle = '';
     DateTime? selectedDate;
     TimeOfDay? selectedTime;
 
@@ -25,14 +28,14 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: Text('Add Medication'),
+              title: Text('Add Appointment'),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TextField(
-                    decoration: InputDecoration(labelText: 'Medication Name'),
+                    decoration: InputDecoration(labelText: 'Appointment Title'),
                     onChanged: (value) {
-                      medicationName = value;
+                      appointmentTitle = value;
                     },
                   ),
                   SizedBox(height: 16),
@@ -41,7 +44,7 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
                       DateTime? pickedDate = await showDatePicker(
                         context: context,
                         initialDate: DateTime.now(),
-                        firstDate: DateTime(2000),
+                        firstDate: DateTime.now(),
                         lastDate: DateTime(2101),
                       );
                       if (pickedDate != null) {
@@ -52,13 +55,27 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
                     },
                     child: Text(selectedDate == null
                         ? 'Select Date'
-                        : 'Date: ${selectedDate!.toLocal()}'.split(' ')[0]),
+                        : 'Date: ${DateFormat('yyyy-MM-dd').format(selectedDate!)}'),
                   ),
                   ElevatedButton(
                     onPressed: () async {
-                      TimeOfDay? pickedTime = await showTimePicker(
+                      final times = List.generate(
+                        25,
+                        (index) => TimeOfDay(hour: 8 + (index ~/ 2), minute: (index % 2) * 30),
+                      );
+                      TimeOfDay? pickedTime = await showDialog(
                         context: context,
-                        initialTime: TimeOfDay.now(),
+                        builder: (BuildContext context) {
+                          return SimpleDialog(
+                            title: const Text('Select Time (08:00–20:00)'),
+                            children: times.map((time) {
+                              return SimpleDialogOption(
+                                onPressed: () => Navigator.pop(context, time),
+                                child: Text(time.format(context)),
+                              );
+                            }).toList(),
+                          );
+                        },
                       );
                       if (pickedTime != null) {
                         setState(() {
@@ -81,13 +98,38 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
                 ),
                 TextButton(
                   onPressed: () {
-                    if (medicationName.isNotEmpty &&
+                    if (appointmentTitle.isNotEmpty &&
                         selectedDate != null &&
                         selectedTime != null) {
-                      final dateTime = '${selectedDate!.toLocal()}'.split(' ')[0] +
-                          ' ${selectedTime!.format(context)}';
-                      _addMedication(medicationName, dateTime);
-                      Navigator.of(context).pop(); // Close the dialog after adding
+                      final dateStr = DateFormat('yyyy-MM-dd').format(selectedDate!);
+                      final timeStr = selectedTime!.format(context);
+                      final dateTime = '$dateStr $timeStr';
+
+                      // Check for conflicts
+                      bool isConflict = appointments.any((appointment) =>
+                          appointment['dateTime'] == dateTime);
+
+                      if (isConflict) {
+                        // Show a red error snackbar if the slot is already booked
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Conflict: This slot is already booked.'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      } else {
+                        // Add the appointment if no conflict
+                        _addAppointment(appointmentTitle, dateTime);
+                        Navigator.of(context).pop();
+                      }
+                    } else {
+                      // Show a snackbar if any field is empty
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Please fill all fields.'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
                     }
                   },
                   child: Text('Add'),
@@ -105,8 +147,8 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Delete Medication'),
-          content: Text('Are you sure you want to delete this medication?'),
+          title: Text('Delete Appointment'),
+          content: Text('Are you sure you want to delete this appointment?'),
           actions: [
             TextButton(
               onPressed: () {
@@ -117,9 +159,9 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
             TextButton(
               onPressed: () {
                 setState(() {
-                  medications.removeAt(index);
+                  appointments.removeAt(index);
                 });
-                Navigator.of(context).pop(); // Close the dialog after deleting
+                Navigator.of(context).pop();
               },
               child: Text('Delete'),
             ),
@@ -139,46 +181,40 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
             Navigator.pushReplacementNamed(context, '/browse');
           },
         ),
-        title: Text('Medications'),
+        title: Text('Reservation'),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
-        child: medications.isEmpty
-            ? Center(
-                child: Text(
-                  "No medications yet.",
-                  style: TextStyle(fontSize: 18, color: Colors.black54),
-                ),
-              )
+        child: appointments.isEmpty
+            ? Center(child: Text("No appointments yet."))
             : ListView.builder(
-                itemCount: medications.length,
+                itemCount: appointments.length,
                 itemBuilder: (context, index) {
-                  return _buildMedicationTile(
-                    medications[index]['name']!,
-                    medications[index]['dateTime']!,
+                  return _buildAppointmentTile(
+                    appointments[index]['title']!,
+                    appointments[index]['dateTime']!,
                     index,
                   );
                 },
               ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _showAddMedicationDialog,
+        onPressed: _showAddAppointmentDialog,
         child: Icon(Icons.add),
         backgroundColor: Color(0xFF3cc4b4),
-        foregroundColor: Colors.white, // Set the icon color to white
       ),
     );
   }
 
-  Widget _buildMedicationTile(String name, String dateTime, int index) {
+  Widget _buildAppointmentTile(String title, String dateTime, int index) {
     return ListTile(
       tileColor: const Color(0xFFF5F5F5),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      leading: Icon(Icons.local_pharmacy, color: Colors.lightBlue),
-      title: Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
+      leading: Icon(Icons.calendar_today, color: Colors.teal),
+      title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
       subtitle: Text(dateTime),
       trailing: IconButton(
         icon: Icon(Icons.delete, color: Colors.red),

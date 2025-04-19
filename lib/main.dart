@@ -12,8 +12,8 @@ import 'screens/setting/privacy.dart';
 import 'screens/setting/setting.dart';
 import 'screens/homescreen.dart';
 import 'screens/medicationsscreen.dart';
-import 'screens/ReservationScreen.dart';
-
+import 'package:help_you_to_mu_health/screens/reservationScreen.dart';
+import 'screens/bmi_screen.dart';
 
 void main() {
   runApp(const HelpYouToMUHealthApp());
@@ -30,6 +30,25 @@ class HelpYouToMUHealthApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'Inter',
         scaffoldBackgroundColor: Colors.white,
+        primaryColor: Colors.white, // Set accent color
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.white, // AppBar background color
+          foregroundColor: Colors.black, // AppBar text/icon color
+          elevation: 0, // Remove shadow
+        ),
+        textTheme: TextTheme(
+          bodyLarge: TextStyle(color: Colors.black), // Default text color
+          bodyMedium: TextStyle(color: Colors.black54), // Secondary text color
+        ),
+        buttonTheme: ButtonThemeData(
+          buttonColor: Color(0xFF3cc4b4), // Button background color
+          textTheme: ButtonTextTheme.primary, // Button text color
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white, backgroundColor: Color(0xFF3cc4b4), // Elevated button text color
+          ),
+        ), colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Color(0xFF3cc4b4)),
       ),
       initialRoute: '/',
       routes: {
@@ -37,17 +56,17 @@ class HelpYouToMUHealthApp extends StatelessWidget {
         '/signup': (context) => SignUpScreen(),
         '/login_2': (context) => const Login2Screen(),
         '/login_3': (context) => const Login3Screen(),
-        '/account': (context) =>  account.AccountPage(),
+        '/account': (context) => account.AccountPage(),
         '/contactus': (context) => contactus.ContactUsPage(),
-        '/language': (context) =>  language.LanguagePage(),
-        '/notification': (context) =>  noti.NotificationPage(),
-        '/privacy': (context) =>  PrivacyPage(),
-        '/setting': (context) =>  SettingsPage(),
+        '/language': (context) => language.LanguagePage(),
+        '/notification': (context) => noti.NotificationPage(),
+        '/privacy': (context) => PrivacyPage(),
+        '/setting': (context) => SettingsPage(),
         '/browse': (context) => browse.BrowseScreen(),
-        '/home': (context) =>  HomeScreen(),
-        '/medication': (context) =>  MedicationsScreen(),
-        '/reservation': (context) => ReservationScreen()
-
+        '/home': (context) => HomeScreen(),
+        '/medication': (context) => MedicationsScreen(),
+        '/reservation': (context) => const ReservationScreen(),
+        '/bmi': (context) => BMIScreen(),
       },
     );
   }
