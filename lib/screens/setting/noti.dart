@@ -22,6 +22,7 @@ class _NotificationPageState extends State<NotificationPage> {
   bool newServiceAvailable = false;
   bool newTipsAvailable = true;
 
+  // Helper method to build a switch tile
   Widget buildSwitch(String title, bool value, ValueChanged<bool> onChanged) {
     return SwitchListTile(
       title: Text(title),
@@ -70,15 +71,6 @@ class _NotificationPageState extends State<NotificationPage> {
             Divider(),
             buildSwitch('App updates', appUpdates,
                 (value) => setState(() => appUpdates = value)),
-            buildSwitch('Bill Reminder', billReminder,
-                (value) => setState(() => billReminder = value)),
-            buildSwitch('Promotion', promotion,
-                (value) => setState(() => promotion = value)),
-            buildSwitch('Discount Available', discountAvailable,
-                (value) => setState(() => discountAvailable = value)),
-            buildSwitch('Payment Request', paymentRequest,
-                (value) => setState(() => paymentRequest = value)),
-
             SizedBox(height: 20),
 
             // Others Section
@@ -93,24 +85,6 @@ class _NotificationPageState extends State<NotificationPage> {
                 (value) => setState(() => newTipsAvailable = value)),
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        onTap: (index) {},
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.event_seat),
-            label: 'Reservation',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Browse',
-          ),
-        ],
       ),
     );
   }

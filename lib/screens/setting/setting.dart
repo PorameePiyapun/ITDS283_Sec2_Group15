@@ -44,8 +44,6 @@ class SettingsPage extends StatelessWidget {
           Text('irvang@danmateo.com'),
           SizedBox(height: 20),
           Divider(),
-
-          // ✅ แต่ละรายการลิงก์ไปยัง route ที่ต้องการ
           buildSettingItem(context, Icons.person, 'Account', '/account'),
           buildSettingItem(context, Icons.notifications, 'Notification', '/notification'),
           buildSettingItem(context, Icons.privacy_tip, 'Privacy policy', '/privacy'),
@@ -53,18 +51,9 @@ class SettingsPage extends StatelessWidget {
           buildSettingItem(context, Icons.contact_mail, 'Contact us', '/contactus'),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: 'Reservation'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Browse'),
-        ],
-      ),
     );
   }
 
-  // ✅ เพิ่ม context เพื่อใช้กับ Navigator
   Widget buildSettingItem(BuildContext context, IconData icon, String title, String routeName) {
     return ListTile(
       leading: Icon(icon),
@@ -73,6 +62,68 @@ class SettingsPage extends StatelessWidget {
       onTap: () {
         Navigator.pushNamed(context, routeName);
       },
+    );
+  }
+}
+
+class NotificationPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Notifications")),
+      body: Center(child: Text("This is the Notification Page")),
+    );
+  }
+}
+
+// Other example pages for demonstration purposes
+class AccountPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Account")),
+      body: Center(child: Text("Account Page")),
+    );
+  }
+}
+
+class PrivacyPolicyPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Privacy Policy")),
+      body: Center(child: Text("Privacy Policy Page")),
+    );
+  }
+}
+
+class LanguagePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Language")),
+      body: Center(child: Text("Language Page")),
+    );
+  }
+}
+
+class ContactUsPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Contact Us")),
+      body: Center(child: Text("Contact Us Page")),
+    );
+  }
+}
+
+// Optional: For unknown routes (e.g., typos in the route names)
+class UnknownPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Unknown Route")),
+      body: Center(child: Text("This route does not exist")),
     );
   }
 }

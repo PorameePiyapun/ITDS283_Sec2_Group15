@@ -16,7 +16,17 @@ class _AccountPageState extends State<AccountPage> {
   final TextEditingController _dobController =
       TextEditingController(text: '23/05/1995');
 
-  String selectedCountry = 'Nigeria';
+  String selectedCountry = 'Thailand';
+
+  @override
+  void dispose() {
+    // Dispose controllers to free up resources
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _dobController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +43,7 @@ class _AccountPageState extends State<AccountPage> {
           key: _formKey,
           child: Column(
             children: [
+              // Profile Picture
               Center(
                 child: Stack(
                   children: [
@@ -56,6 +67,7 @@ class _AccountPageState extends State<AccountPage> {
                 ),
               ),
               SizedBox(height: 30),
+              // Name Field
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(
@@ -64,6 +76,7 @@ class _AccountPageState extends State<AccountPage> {
                 ),
               ),
               SizedBox(height: 15),
+              // Email Field
               TextFormField(
                 controller: _emailController,
                 decoration: InputDecoration(
@@ -72,6 +85,7 @@ class _AccountPageState extends State<AccountPage> {
                 ),
               ),
               SizedBox(height: 15),
+              // Password Field
               TextFormField(
                 controller: _passwordController,
                 obscureText: true,
@@ -81,6 +95,7 @@ class _AccountPageState extends State<AccountPage> {
                 ),
               ),
               SizedBox(height: 15),
+              // Date of Birth Field
               TextFormField(
                 controller: _dobController,
                 readOnly: true,
@@ -105,9 +120,10 @@ class _AccountPageState extends State<AccountPage> {
                 },
               ),
               SizedBox(height: 15),
+              // Country/Region Dropdown
               DropdownButtonFormField<String>(
                 value: selectedCountry,
-                items: ['Nigeria', 'Thailand', 'USA', 'UK']
+                items: ['Thailand', 'China', 'USA', 'UK']
                     .map((country) => DropdownMenuItem(
                           child: Text(country),
                           value: country,
@@ -124,6 +140,7 @@ class _AccountPageState extends State<AccountPage> {
                 ),
               ),
               SizedBox(height: 30),
+              // Save Changes Button
               SizedBox(
                 width: double.infinity,
                 height: 50,
@@ -145,24 +162,6 @@ class _AccountPageState extends State<AccountPage> {
             ],
           ),
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        onTap: (index) {},
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: "Home",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.event_seat),
-            label: "Reservation",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: "Browse",
-          ),
-        ],
       ),
     );
   }
