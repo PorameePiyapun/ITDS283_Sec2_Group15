@@ -12,6 +12,7 @@ import 'screens/setting/privacy.dart';
 import 'screens/setting/setting.dart';
 import 'screens/homescreen.dart';
 import 'screens/medicationsscreen.dart';
+import 'screens/ReservationScreen.dart';
 
 
 void main() {
@@ -44,7 +45,9 @@ class HelpYouToMUHealthApp extends StatelessWidget {
         '/setting': (context) =>  SettingsPage(),
         '/browse': (context) => browse.BrowseScreen(),
         '/home': (context) =>  HomeScreen(),
-        '/medication': (context) =>  MedicationsScreen()
+        '/medication': (context) =>  MedicationsScreen(),
+        '/reservation': (context) => ReservationScreen()
+
       },
     );
   }
