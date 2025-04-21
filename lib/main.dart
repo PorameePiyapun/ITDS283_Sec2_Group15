@@ -15,13 +15,10 @@ import 'screens/homescreen.dart';
 import 'screens/medicationsscreen.dart';
 import 'screens/reservationScreen.dart';
 import 'screens/bmi_screen.dart';
-import 'screens/caloriecalculator.dart'; // Add this import
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'screens/caloriecalculator.dart';
+
 
 void main() {
-
-  sqfliteFfiInit();  
-  
   runApp(const HelpYouToMUHealthApp());
 }
 

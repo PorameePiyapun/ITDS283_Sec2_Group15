@@ -1,6 +1,31 @@
 import 'package:flutter/material.dart';
 
 class SettingsPage extends StatelessWidget {
+  void _confirmSignOut(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Sign Out'),
+          content: Text('Are you sure you want to sign out?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+                Navigator.pushReplacementNamed(context, '/'); // Navigate to login screen
+              },
+              child: Text('Sign Out'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -12,36 +37,15 @@ class SettingsPage extends StatelessWidget {
           icon: Icon(Icons.arrow_back, color: Colors.grey[700]),
           onPressed: () => Navigator.pop(context),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout, color: Colors.grey[700]),
+            onPressed: () => _confirmSignOut(context),
+          ),
+        ],
       ),
       body: Column(
         children: [
-          SizedBox(height: 20),
-          Center(
-            child: Stack(
-              children: [
-                CircleAvatar(
-                  radius: 45,
-                  backgroundColor: Colors.grey[300],
-                  child: Icon(Icons.person, size: 50, color: Colors.white),
-                ),
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: CircleAvatar(
-                    radius: 14,
-                    backgroundColor: Colors.white,
-                    child: Icon(Icons.edit, size: 16),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: 10),
-          Text(
-            'Irvan Danmateo',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          Text('irvang@danmateo.com'),
           SizedBox(height: 20),
           Divider(),
           buildSettingItem(context, Icons.person, 'Account', '/account'),

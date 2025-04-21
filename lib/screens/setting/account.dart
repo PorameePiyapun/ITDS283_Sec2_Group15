@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/helpers/database_helper.dart';
 
 class AccountPage extends StatefulWidget {
   @override
@@ -7,16 +8,73 @@ class AccountPage extends StatefulWidget {
 
 class _AccountPageState extends State<AccountPage> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _nameController =
-      TextEditingController(text: 'Melissa Peters');
-  final TextEditingController _emailController =
-      TextEditingController(text: 'melpeters@gmail.com');
-  final TextEditingController _passwordController =
-      TextEditingController(text: '**********');
-  final TextEditingController _dobController =
-      TextEditingController(text: '23/05/1995');
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _obscurePassword = true; // State variable to track password visibility
 
-  String selectedCountry = 'Thailand';
+  Future<void> _saveChanges() async {
+    if (_formKey.currentState!.validate()) {
+      Map<String, dynamic> updatedUser = {
+        'fullName': _nameController.text,
+        'email': _emailController.text,
+        'password': _passwordController.text,
+        'phoneNumber': '1234567890', // Example phone number
+      };
+
+      try {
+        await DatabaseHelper().updateUser(_emailController.text, updatedUser);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Changes Saved")),
+        );
+      } catch (e) {
+        print('Error updating user data: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Failed to save changes")),
+        );
+      }
+    }
+  }
+
+  void _confirmDeleteAccount() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Delete Account'),
+          content: Text('Are you sure you want to delete your account? This action cannot be undone.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop(); // Close the dialog
+                await _deleteAccount();
+              },
+              child: Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _deleteAccount() async {
+    try {
+      await DatabaseHelper().deleteUserByEmail(_emailController.text);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Account Deleted")),
+      );
+      Navigator.pushReplacementNamed(context, '/'); // Navigate to login screen
+    } catch (e) {
+      print('Error deleting account: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Failed to delete account")),
+      );
+    }
+  }
 
   @override
   void dispose() {
@@ -24,7 +82,6 @@ class _AccountPageState extends State<AccountPage> {
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _dobController.dispose();
     super.dispose();
   }
 
@@ -32,10 +89,16 @@ class _AccountPageState extends State<AccountPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Account"),
+        title: Text("Update Account Information"), // Updated headline
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.delete, color: Colors.red),
+            onPressed: _confirmDeleteAccount,
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20),
@@ -43,29 +106,6 @@ class _AccountPageState extends State<AccountPage> {
           key: _formKey,
           child: Column(
             children: [
-              // Profile Picture
-              Center(
-                child: Stack(
-                  children: [
-                    CircleAvatar(
-                      radius: 50,
-                      backgroundColor: Colors.grey[300],
-                      child: Icon(Icons.person, size: 50, color: Colors.white),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 4,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(Icons.camera_alt, size: 20),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
               SizedBox(height: 30),
               // Name Field
               TextFormField(
@@ -88,55 +128,20 @@ class _AccountPageState extends State<AccountPage> {
               // Password Field
               TextFormField(
                 controller: _passwordController,
-                obscureText: true,
+                obscureText: _obscurePassword,
                 decoration: InputDecoration(
                   labelText: 'Password',
                   border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(height: 15),
-              // Date of Birth Field
-              TextFormField(
-                controller: _dobController,
-                readOnly: true,
-                decoration: InputDecoration(
-                  labelText: 'Date of Birth',
-                  border: OutlineInputBorder(),
-                  suffixIcon: Icon(Icons.arrow_drop_down),
-                ),
-                onTap: () async {
-                  DateTime? picked = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime(1995, 5, 23),
-                    firstDate: DateTime(1900),
-                    lastDate: DateTime.now(),
-                  );
-                  if (picked != null) {
-                    setState(() {
-                      _dobController.text =
-                          "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
-                    });
-                  }
-                },
-              ),
-              SizedBox(height: 15),
-              // Country/Region Dropdown
-              DropdownButtonFormField<String>(
-                value: selectedCountry,
-                items: ['Thailand', 'China', 'USA', 'UK']
-                    .map((country) => DropdownMenuItem(
-                          child: Text(country),
-                          value: country,
-                        ))
-                    .toList(),
-                onChanged: (value) {
-                  setState(() {
-                    selectedCountry = value!;
-                  });
-                },
-                decoration: InputDecoration(
-                  labelText: 'Country/Region',
-                  border: OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
+                  ),
                 ),
               ),
               SizedBox(height: 30),
@@ -145,14 +150,7 @@ class _AccountPageState extends State<AccountPage> {
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      // Save logic here
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Changes Saved")),
-                      );
-                    }
-                  },
+                  onPressed: _saveChanges,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF20D2C4),
                   ),
