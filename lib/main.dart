@@ -4,6 +4,7 @@ import '/screens/login/signup.dart';
 import '/screens/login/login_2.dart';
 import '/screens/login/login_3.dart';
 import '/screens/browse.dart' as browse; // Alias for BrowseScreen
+import 'screens/heartratecalculator.dart';
 import 'screens/setting/account.dart' as account;
 import 'screens/setting/contactus.dart' as contactus;
 import 'screens/setting/language.dart' as language;
@@ -12,10 +13,15 @@ import 'screens/setting/privacy.dart';
 import 'screens/setting/setting.dart';
 import 'screens/homescreen.dart';
 import 'screens/medicationsscreen.dart';
-import 'package:help_you_to_mu_health/screens/reservationScreen.dart';
+import 'screens/reservationScreen.dart';
 import 'screens/bmi_screen.dart';
+import 'screens/caloriecalculator.dart'; // Add this import
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {
+
+  sqfliteFfiInit();  
+  
   runApp(const HelpYouToMUHealthApp());
 }
 
@@ -48,13 +54,14 @@ class HelpYouToMUHealthApp extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             foregroundColor: Colors.white, backgroundColor: Color(0xFF3cc4b4), // Elevated button text color
           ),
-        ), colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Color(0xFF3cc4b4)),
+        ),
+        colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Color(0xFF3cc4b4)),
       ),
       initialRoute: '/',
       routes: {
         '/': (context) => Login1Screen(),
         '/signup': (context) => SignUpScreen(),
-        '/login_2': (context) => const Login2Screen(),
+        '/login_2': (context) => Login2Screen(),
         '/login_3': (context) => const Login3Screen(),
         '/account': (context) => account.AccountPage(),
         '/contactus': (context) => contactus.ContactUsPage(),
@@ -67,6 +74,8 @@ class HelpYouToMUHealthApp extends StatelessWidget {
         '/medication': (context) => MedicationsScreen(),
         '/reservation': (context) => const ReservationScreen(),
         '/bmi': (context) => BMIScreen(),
+        '/caloriecalculator': (context) => CalorieCalculatorScreen(),
+        '/heart-rate-calculator': (context) => TargetHeartRateCalculatorScreen(),
       },
     );
   }

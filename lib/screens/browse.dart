@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:help_you_to_mu_health/screens/bmi_screen.dart';
+import 'package:help_you_to_mu_health/screens/caloriecalculator.dart'; 
+import 'heartratecalculator.dart';
 
 class BrowseScreen extends StatefulWidget {
   @override
@@ -51,7 +53,17 @@ class _BrowseScreenState extends State<BrowseScreen> {
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 16),
-            _buildCategoryTile(Icons.local_fire_department, "Activity", Colors.deepOrange),
+            _buildCategoryTile(
+              Icons.local_fire_department,
+              "Activity",
+              Color(0xFF3cc4b4),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CalorieCalculatorScreen()),
+                );
+              },
+            ),
             const SizedBox(height: 12),
             _buildCategoryTile(
               Icons.accessibility_new,
@@ -65,8 +77,28 @@ class _BrowseScreenState extends State<BrowseScreen> {
               },
             ),
             const SizedBox(height: 12),
-            _buildCategoryTile(Icons.favorite, "Heart", Colors.red),
-            medication(),
+            _buildCategoryTile(
+              Icons.favorite,
+              "Heart",
+              Colors.red,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => TargetHeartRateCalculatorScreen(),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 12),
+            _buildCategoryTile(
+              Icons.local_pharmacy,
+              "Medications",
+              Colors.lightBlue,
+              onTap: () {
+                Navigator.pushNamed(context, '/medication');
+              },
+            ),
           ],
         ),
       ),
@@ -99,22 +131,6 @@ class _BrowseScreenState extends State<BrowseScreen> {
       title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
       trailing: const Icon(Icons.arrow_forward_ios, size: 16),
       onTap: onTap,
-    );
-  }
-
-  Widget medication() {
-    return Column(
-      children: [
-        const SizedBox(height: 12),
-        _buildCategoryTile(
-          Icons.local_pharmacy,
-          "Medications",
-          Colors.lightBlue,
-          onTap: () {
-            Navigator.pushNamed(context, '/medication');
-          },
-        ),
-      ],
     );
   }
 }
